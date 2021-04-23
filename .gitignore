@@ -1,0 +1,6 @@
+.vscode/
+serviceAccountCreds.json
+*test/
+*test.py
+__pycache__/
+*.pyc
