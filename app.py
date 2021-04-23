@@ -28,4 +28,5 @@ cred = credentials.Certificate('./serviceAccountCreds.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 collection_watch = db.collection('devices').on_snapshot(on_device_data)
-sleep(1000)
+while True:
+    sleep(1000)
