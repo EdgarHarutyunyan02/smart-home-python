@@ -11,13 +11,16 @@ class Lightbulb(LED):
         print("LIGHTBULB_INIT")
         if (state):
             self.set_state(state)
+        self.__doc = None
 
-    def set_state(self, state):
+    def set_state(self, state,document):
         print("SETTING STATE>>", state)
         if 'on' in state and state['on']:
             self.on()
         else:
             self.off()
+        if document:
+            self.__doc = document
         print("IS_ACTIVE: ", self.is_active)
 
     def _blink_th(self, turn_on_time, turn_off_time):

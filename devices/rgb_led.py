@@ -17,6 +17,7 @@ class RGBLed():
         self._transition_thread = None
         self._brightness_thread = None
         self._max_brightness = 0.7
+        self.__doc = None
         if (state):
             self.set_state(state)
 
@@ -100,7 +101,7 @@ class RGBLed():
             self._brightness_queue.task_done()
         return
 
-    def set_state(self, state):
+    def set_state(self, state, document):
         print("SETTING STATE>>", state['color']['spectrumRgb'])
         if state['color']['spectrumRgb'] != None:
             self.color = self._hex_to_rgb(state['color']['spectrumRgb'])
@@ -111,6 +112,9 @@ class RGBLed():
 
         if state['brightness'] != None:
             self.brightness = state['brightness']/100*self._max_brightness
+        
+        if document:
+            self.__doc = document
 
     print("RGB_LED INITIALIZED")
     # pass
