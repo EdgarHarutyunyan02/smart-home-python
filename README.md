@@ -17,7 +17,7 @@ It is currently in beta and it's still being actively developed.
 
 - In terminal run this command to install Python and necessary tools.
 
-  `sudo apt install python-dev python3 python3-pip`
+  `sudo apt install python-dev python3 python3-pip python3-numpy`
 
 - Install necessary libraries with this command.
 
