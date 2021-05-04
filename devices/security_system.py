@@ -1,5 +1,7 @@
 from gpiozero import LED
 from .water_leak_sensor import WaterLeakSensor
+from .temperature_sensor import TemperatureSensor
+from .ambient_sensor import AmbientSensor
 
 
 class SecuritySystem(LED):
@@ -8,7 +10,7 @@ class SecuritySystem(LED):
         self.__state = state
         self.__alarm = False
         self.__alarm_indicator = LED(buzzer_pin, initial_value=False)
-        self.__doc = None
+        self._doc = None
 
     @property
     def state(self):
@@ -24,25 +26,34 @@ class SecuritySystem(LED):
             self.off()
 
         if document:
-            self.__doc = document
+            self._doc = document
 
     def set_alarm(self, value):
         self.__alarm = value
         if value == True:
             self.__alarm_indicator.blink(
                 on_time=0.3, off_time=0.2, background=True)
-            self.__doc.update({"states.isArmed": True})
+            self._doc.update({"states.isArmed": True})
         else:
             self.__alarm_indicator.off()
 
-    def publish(self, sensor, alarm):
+    def publish(self, sensor, state):
         if isinstance(sensor, WaterLeakSensor):
-            if alarm == True:
+            if state == True:
                 # Water leak detected, turn on the alarm.
                 self.set_alarm(True)
                 return
 
-        if isinstance(sensor, WaterLeakSensor):
-            if (self.state['isArmed']):
-                pass
-            pass
+        if isinstance(sensor, TemperatureSensor):
+            if type(state) is int:
+                if state > 35:
+                    # Temperature got high
+                    self.set_alarm(True)
+                    return
+
+        if isinstance(sensor, AmbientSensor):
+            if type(state) is int:
+                if not (40 <= state <= 60):
+                    # Humidity is not normal
+                    self.set_alarm(True)
+                    return

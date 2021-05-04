@@ -3,16 +3,23 @@ from firebase_admin import firestore, credentials
 from time import sleep
 import board
 from devices import RGBLed, Lightbulb, security_system
-from devices import SecuritySystem, WaterLeakSensor
-securitySystem = SecuritySystem(state_pin=27,
-                                buzzer_pin=24)
+from devices import SecuritySystem, WaterLeakSensor,  BME280, TemperatureSensor, AmbientSensor
+from utils.PubSub import PubSub
 
+pub_sub_manager = PubSub()
+
+securitySystem = SecuritySystem(state_pin=27, buzzer_pin=24)
+
+bme280 = BME280(event_manager=pub_sub_manager)
+bme280.start_monitoring()
 
 SENSORS = {
     # "4BCIpzBWpgLA24mMI7r2":object, # Door Sensor
     "MxRCd6ERRSWzYzyNTE8S": WaterLeakSensor(23),
-    # "WbKjbbYIyPmsm5MDO4FE":object, #temperature sensor
-    # "k5kHgwoSnXcWESFvPq4B": object, #ambient sensor
+    # temperature sensor
+    "WbKjbbYIyPmsm5MDO4FE": TemperatureSensor(event_manager=pub_sub_manager),
+    # ambient sensor
+    "k5kHgwoSnXcWESFvPq4B": AmbientSensor(event_manager=pub_sub_manager),
 }
 
 for sensor_id in SENSORS:
@@ -31,15 +38,15 @@ DEVICE_DATA = {}
 
 def on_device_data(collection_snapshot, changes, read_time):
     print("Snapshot called")
-    # print(collection_snapshot)
     for doc in collection_snapshot:
-
         DEVICE_DATA[doc.id] = doc.to_dict()
-        # print(doc.to_dict())
-        # print()
         if doc.id in DEVICES:
-            print(doc.to_dict()['states'])
+            print("Device State", doc.to_dict()['states'])
             DEVICES[doc.id].set_state(doc.to_dict()['states'], doc.reference)
+
+        if doc.id in SENSORS:
+            print("Sensor State", doc.to_dict()['states'])
+            SENSORS[doc.id].set_doc(doc.reference)
 
 
 cred = credentials.Certificate('./serviceAccountCreds.json')

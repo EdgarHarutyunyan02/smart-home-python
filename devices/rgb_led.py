@@ -17,7 +17,7 @@ class RGBLed():
         self._transition_thread = None
         self._brightness_thread = None
         self._max_brightness = 0.7
-        self.__doc = None
+        self._doc = None
         if (state):
             self.set_state(state)
 
@@ -27,7 +27,7 @@ class RGBLed():
 
     @brightness.setter
     def brightness(self, target_brightness=None):
-        if target_brightness == None:
+        if target_brightness is None:
             return
         if (self._pixels.brightness == target_brightness):
             return
@@ -56,7 +56,7 @@ class RGBLed():
 
     @color.setter
     def color(self, target_color=None):
-        if target_color == None:
+        if target_color is None:
             return
         if not isinstance(target_color, tuple):
             target_color = self._hex_to_rgb(target_color)
@@ -112,9 +112,6 @@ class RGBLed():
 
         if state['brightness'] != None:
             self.brightness = state['brightness']/100*self._max_brightness
-        
-        if document:
-            self.__doc = document
 
-    print("RGB_LED INITIALIZED")
-    # pass
+        if document:
+            self._doc = document
