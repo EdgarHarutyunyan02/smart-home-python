@@ -8,9 +8,8 @@ class SecuritySystem(LED):
         self.__state = state
         self.__alarm = False
         self.__alarm_indicator = LED(buzzer_pin, initial_value=False)
-        self.__doc = None;
+        self.__doc = None
 
-    
     @property
     def state(self):
         return self.__state
@@ -23,18 +22,18 @@ class SecuritySystem(LED):
         else:
             self.set_alarm(False)
             self.off()
-        
+
         if document:
             self.__doc = document
 
-
     def set_alarm(self, value):
+        self.__alarm = value
         if value == True:
-            self.__alarm_indicator.blink()
-            self.__doc.update({"states.isArmed":True})
+            self.__alarm_indicator.blink(
+                on_time=0.3, off_time=0.2, background=True)
+            self.__doc.update({"states.isArmed": True})
         else:
             self.__alarm_indicator.off()
-        self.__alarm = value
 
     def publish(self, sensor, alarm):
         if isinstance(sensor, WaterLeakSensor):
