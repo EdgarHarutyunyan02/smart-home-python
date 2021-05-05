@@ -3,6 +3,9 @@ from .water_leak_sensor import WaterLeakSensor
 from .temperature_sensor import TemperatureSensor
 from .ambient_sensor import AmbientSensor
 
+from utils.MailService import MailService
+from datetime import datetime
+
 
 class SecuritySystem(LED):
     def __init__(self, state_pin, buzzer_pin, state=None):
@@ -11,6 +14,7 @@ class SecuritySystem(LED):
         self.__alarm = False
         self.__alarm_indicator = LED(buzzer_pin, initial_value=False)
         self._doc = None
+        self._mail_service = MailService()
 
     @property
     def state(self):
@@ -28,7 +32,19 @@ class SecuritySystem(LED):
         if document:
             self._doc = document
 
-    def set_alarm(self, value):
+    def set_alarm(self, value, description=""):
+        if self.__alarm == False and value == True:
+            # Changed from False to True, Notify user.
+            try:
+                time_string = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+                message = f'''
+                        Your security alarm was triggered at: {time_string}.
+                        {description}
+                        '''
+                self._mail_service.send_message(message, "Security System")
+            except Exception as error:
+                print(error)
+
         self.__alarm = value
         if value == True:
             self.__alarm_indicator.blink(
@@ -42,19 +58,24 @@ class SecuritySystem(LED):
         if isinstance(sensor, WaterLeakSensor):
             if state == True:
                 # Water leak detected, turn on the alarm.
-                self.set_alarm(True)
+                self.set_alarm(True, description="Water leak detected.")
                 return
 
         if isinstance(sensor, TemperatureSensor):
             if type(state) is int:
                 if state > 35:
                     # Temperature got high
-                    self.set_alarm(True)
+                    self.set_alarm(
+                        True, description="Temperature is above 35 Celsius.")
                     return
 
         if isinstance(sensor, AmbientSensor):
             if type(state) is int:
-                if not (40 <= state <= 60):
-                    # Humidity is not normal
-                    self.set_alarm(True)
+                # Humidity is not normal
+                if state < 40:
+                    self.set_alarm(
+                        True, description="Humidity is below 40%")
+                if state > 70:
+                    self.set_alarm(
+                        True, description="Humidity is above 70%")
                     return

@@ -9,7 +9,7 @@ from queue import Queue
 
 class BME280():
     def __init__(self, event_manager):
-        self.interval = 30
+        self.interval = 1
         self._monitoring_thread = None
         self._subscribers = Queue()
         self._temperature = None

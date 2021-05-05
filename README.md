@@ -21,7 +21,9 @@ It is currently in beta and it's still being actively developed.
 
 - Install necessary libraries with this command.
 
-  `pip3 install -r requirements.txt`
+  `sudo pip3 install -r requirements.txt`
+
+- Configure environment variables in `.env.default` file and rename it to `.env`
 
 - Run the program with sudo privileges (sudo is required for GPIO pins to be controlled).
 
