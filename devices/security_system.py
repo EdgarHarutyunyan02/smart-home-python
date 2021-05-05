@@ -33,7 +33,8 @@ class SecuritySystem(LED):
         if value == True:
             self.__alarm_indicator.blink(
                 on_time=0.3, off_time=0.2, background=True)
-            self._doc.update({"states.isArmed": True})
+            if self._doc:
+                self._doc.update({"states.isArmed": True})
         else:
             self.__alarm_indicator.off()
 
