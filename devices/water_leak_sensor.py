@@ -14,6 +14,6 @@ class WaterLeakSensor(Sensor):
 
     def _process_trigger(self, **kwargs):
         self.trigger(state=kwargs['state'])
-        # if self._doc:
-        self._doc.update(
-            {"states.currentSensorStateData.currentSensorState": "leak" if kwargs['state'] == True else "no leak"})
+        if self._doc:
+            self._doc.update(
+                {"states.currentSensorStateData.currentSensorState": "leak" if kwargs['state'] == True else "no leak"})
