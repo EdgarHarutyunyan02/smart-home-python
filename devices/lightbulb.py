@@ -45,4 +45,3 @@ class Lightbulb(LED):
 
     def stop_blink(self):
         self._blinking = False
-

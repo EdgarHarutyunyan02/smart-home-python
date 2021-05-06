@@ -2,8 +2,8 @@ import firebase_admin
 from firebase_admin import firestore, credentials
 from time import sleep
 import board
-from devices import RGBLed, Lightbulb, security_system
-from devices import SecuritySystem, WaterLeakSensor,  BME280, TemperatureSensor, AmbientSensor
+from devices import RGBLed, Lightbulb, Led, Outlet, security_system
+from devices import SecuritySystem, WaterLeakSensor,  BME280, TemperatureSensor, AmbientSensor, DoorSensor
 from utils.PubSub import PubSub
 from utils.MailService import MailService
 
@@ -28,6 +28,7 @@ SENSORS = {
     "WbKjbbYIyPmsm5MDO4FE": TemperatureSensor(event_manager=pub_sub_manager),
     # ambient sensor
     "k5kHgwoSnXcWESFvPq4B": AmbientSensor(event_manager=pub_sub_manager),
+    "4BCIpzBWpgLA24mMI7r2": DoorSensor(16),
 }
 
 for sensor_id in SENSORS:
@@ -37,7 +38,8 @@ for sensor_id in SENSORS:
 DEVICES = {
     "H28mo4GHlyaorwBsOyNu": RGBLed(board.D18, 30),
     "iz277eqT5Mwhgv7XLfyF": Lightbulb(17),
-    # "iThlJRyeBSgeslxJwGDz": Lightbulb(27),
+    "iThlJRyeBSgeslxJwGDz": Led(6),
+    "VVvt3h2PPwysDFUZDAE5": Outlet(5),  # Relay
     "3rL3QL7Kq2HrQjs53Y7o": securitySystem
 }
 

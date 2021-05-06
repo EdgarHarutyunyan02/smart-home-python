@@ -2,6 +2,7 @@ from gpiozero import LED
 from .water_leak_sensor import WaterLeakSensor
 from .temperature_sensor import TemperatureSensor
 from .ambient_sensor import AmbientSensor
+from .door_sensor import DoorSensor
 
 from datetime import datetime
 
@@ -9,30 +10,30 @@ from datetime import datetime
 class SecuritySystem(LED):
     def __init__(self, state_pin, buzzer_pin, event_manager, state=None):
         super().__init__(state_pin, initial_value=False)
-        self.__state = state
-        self.__alarm = False
-        self.__alarm_indicator = LED(buzzer_pin, initial_value=False)
+        self._state = state
+        self._alarm = False
+        self._alarm_indicator = LED(buzzer_pin, initial_value=False)
         self._event_manager = event_manager
         self._doc = None
 
     @property
     def state(self):
-        return self.__state
+        return self._state
 
     def set_state(self, state, document):
         print("Setting Security System State", state)
-        self.__state = state
+        self._state = state
         if "isArmed" in state and state['isArmed']:
             self.on()
         else:
             self.set_alarm(False)
             self.off()
-
+        print("ARNED_STATUS:", self._state["isArmed"])
         if document:
             self._doc = document
 
     def set_alarm(self, value, description=""):
-        if self.__alarm == False and value == True:
+        if self._alarm == False and value == True:
             # Changed from False to True, Notify user.
             try:
                 time_string = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
@@ -45,14 +46,14 @@ class SecuritySystem(LED):
             except Exception as error:
                 print(error)
 
-        self.__alarm = value
+        self._alarm = value
         if value == True:
-            self.__alarm_indicator.blink(
+            self._alarm_indicator.blink(
                 on_time=0.3, off_time=0.2, background=True)
             if self._doc:
                 self._doc.update({"states.isArmed": True})
         else:
-            self.__alarm_indicator.off()
+            self._alarm_indicator.off()
 
     def publish(self, sensor, state):
         if isinstance(sensor, WaterLeakSensor):
@@ -79,3 +80,11 @@ class SecuritySystem(LED):
                     self.set_alarm(
                         True, description="Humidity is above 70%")
                     return
+
+        if isinstance(sensor, DoorSensor):
+            if type(state) is bool:
+                if self._state and self._state["isArmed"] == True:
+                    if state == True:
+                        # Door is open
+                        self.set_alarm(
+                            True, description="Door is open.")
