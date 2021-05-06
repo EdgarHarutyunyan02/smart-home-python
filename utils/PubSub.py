@@ -1,5 +1,6 @@
 import threading
 
+
 class PubSub():
     def __init__(self):
         self._subscribers = {}

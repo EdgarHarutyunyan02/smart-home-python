@@ -40,9 +40,8 @@ class MailService():
                 context = ssl.create_default_context()
                 with smtplib.SMTP_SSL("smtp.gmail.com", self._port, context=context) as self._server:
                     self._server.login(self._email, self._password)
-                    print(self._server)
                     self._server.sendmail(
                         self._email, receiver, msg.as_string())
                     print("Successfully sent the email.")
         except (smtplib.SMTPAuthenticationError, socket.gaierror, smtplib.SMTPException) as err:
-            raise Exception(err)
+            print(err)

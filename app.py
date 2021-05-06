@@ -5,10 +5,18 @@ import board
 from devices import RGBLed, Lightbulb, security_system
 from devices import SecuritySystem, WaterLeakSensor,  BME280, TemperatureSensor, AmbientSensor
 from utils.PubSub import PubSub
+from utils.MailService import MailService
 
+# This object is for managing intercummunication using Publish/Subscribe model
 pub_sub_manager = PubSub()
 
-securitySystem = SecuritySystem(state_pin=27, buzzer_pin=24)
+# Registering Mail service, to notify user about events
+mail_service = MailService()
+
+pub_sub_manager.subscribe("SEND_MESSAGE", mail_service.send_message)
+
+securitySystem = SecuritySystem(
+    state_pin=27, buzzer_pin=24, event_manager=pub_sub_manager)
 
 bme280 = BME280(event_manager=pub_sub_manager)
 bme280.start_monitoring()

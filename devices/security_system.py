@@ -3,18 +3,17 @@ from .water_leak_sensor import WaterLeakSensor
 from .temperature_sensor import TemperatureSensor
 from .ambient_sensor import AmbientSensor
 
-from utils.MailService import MailService
 from datetime import datetime
 
 
 class SecuritySystem(LED):
-    def __init__(self, state_pin, buzzer_pin, state=None):
+    def __init__(self, state_pin, buzzer_pin, event_manager, state=None):
         super().__init__(state_pin, initial_value=False)
         self.__state = state
         self.__alarm = False
         self.__alarm_indicator = LED(buzzer_pin, initial_value=False)
+        self._event_manager = event_manager
         self._doc = None
-        self._mail_service = MailService()
 
     @property
     def state(self):
@@ -41,7 +40,8 @@ class SecuritySystem(LED):
                         Your security alarm was triggered at: {time_string}.
                         {description}
                         '''
-                self._mail_service.send_message(message, "Security System")
+                self._event_manager.publish(
+                    "SEND_MESSAGE", message, "Security System")
             except Exception as error:
                 print(error)
 
