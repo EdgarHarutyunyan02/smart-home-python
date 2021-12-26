@@ -39,6 +39,7 @@ DEVICES = {
     "H28mo4GHlyaorwBsOyNu": RGBLed(board.D18, 30),
     "iz277eqT5Mwhgv7XLfyF": Lightbulb(17),
     "iThlJRyeBSgeslxJwGDz": Led(6),
+    "9tVH0v423ZD5tZW4l2m6": Led(26),
     "VVvt3h2PPwysDFUZDAE5": Outlet(5),  # Relay
     "3rL3QL7Kq2HrQjs53Y7o": securitySystem
 }
