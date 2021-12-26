@@ -37,7 +37,7 @@ It is currently in beta and it's still being actively developed.
   sudo python3 app.py
   ```
 
-- To run the program at startup, create a cronjob for `root` user by `running sudo crontab -e` and add this line (change the paths accordingly).
+- To run the program at startup, create a cronjob for `root` user by running `sudo crontab -e` and add this line (change the paths accordingly).
   ```bash
   @reboot sh /home/pi/smart-home-python/smart_home_launcher.sh >/home/pi/smart-home-python/smart_home.log 2>&1
   ```
